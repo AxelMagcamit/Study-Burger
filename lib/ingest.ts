@@ -26,6 +26,7 @@ export async function extractFile(file:File,onProgress:(s:string)=>void,signal:A
  try{const pdf=await task.promise;if(pdf.numPages>300)throw new Error('PDFs can contain up to 300 pages. Please split this document.');const pages:string[]=[];let size=0;for(let i=1;i<=pdf.numPages;i++){if(signal.aborted)throw new DOMException('Cancelled','AbortError');onProgress(`Extracting page ${i} of ${pdf.numPages}…`);const page=await pdf.getPage(i);const content=await page.getTextContent();const text=content.items.map(it=>'str' in it?it.str+('hasEOL' in it&&it.hasEOL?'\n':' '):'').join('');size+=text.length;if(size>MAX_TEXT)throw new Error('This PDF is too long. Split it into chapters.');pages.push(text);page.cleanup();}return validateText(pages.join('\n\n'));}finally{signal.removeEventListener('abort',abort);await task.destroy();}
  }
  if(['png','jpg','jpeg','mp3','mp4','mpeg','mpga','m4a','wav','webm'].includes(ext||'')){
+ if(file.size>12*1024*1024)throw new Error('Images and audio can be up to 12 MB. Split or compress this file.');
  onProgress('Preparing secure media upload…');
  const prepared=await fetch('/api/media-upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ext,size:file.size}),signal});
  const upload=await prepared.json() as {signedUrl:string;path:string;error?:string};

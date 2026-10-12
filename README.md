@@ -1,6 +1,6 @@
 # Study Burger — Ponpon edition
 
-React 19, Next.js 16, Tailwind, Supabase Auth/Postgres/Storage, and OpenAI.
+React 19, Next.js 16, Tailwind, Supabase Auth/Postgres/Storage, and Google Gemini.
 
 ## Current deployment status
 
@@ -12,13 +12,13 @@ Vercel production deployment is READY at https://study-burger.vercel.app. See RE
 - Supabase project: `vrkygytugewkxsbyzluy` (Tokyo)
 - Primary application origin: `https://study-burger.vercel.app` (APP_URL).
 - Supabase schema is already applied to the project above. Do not replay it there.
-- Google provider and OpenAI key still require owner configuration. No credentials are included.
+- Google provider and Google Gemini key still require owner configuration. No credentials are included.
 
 ## Run locally
 
 Use Node.js 24. Run `npm ci`, copy `.env.example` to `.env.local`, fill in the publishable Supabase key, then run `npm run dev`. Open http://localhost:3000. The sample workspace works without credentials and is intentionally temporary.
 
-Set `APP_URL` to the exact application origin. Set `GOOGLE_AUTH_ENABLED=true` only after completing GOOGLE_AUTH_SETUP.md. `OPENAI_API_KEY` is server-only; it enables generation, image OCR, and audio transcription. Never use a service-role key or NEXT_PUBLIC variable for secrets.
+Set `APP_URL` to the exact application origin. Set `GOOGLE_AUTH_ENABLED=true` only after completing GOOGLE_AUTH_SETUP.md. `GEMINI_API_KEY` is server-only; it enables generation, image OCR, and audio transcription. Never use a service-role key or NEXT_PUBLIC variable for secrets.
 
 For a new Supabase project, apply supabase/schema.sql once through the SQL editor or migration tooling. The original connected project already has this schema.
 
@@ -46,7 +46,7 @@ Settings: Next.js; Node 24; install `npm ci`; build `npm run build`; region Toky
 
 ## Limits and behavior
 
-Documents/media: 20 MB. PDF: 300 pages. Slides: 400. Text: 120,000 characters. Office archives have expansion bounds. Images/audio upload directly to a private Supabase bucket, avoiding Vercel's function request-size limit. Source media is removed after extraction; abandoned files older than one day are cleaned when that user begins another upload. Owners should periodically clean abandoned objects through Storage administration if a user never returns.
+Documents: 20 MB. Images/audio: 12 MB. PDF: 300 pages. Slides: 400. Text: 120,000 characters. Office archives have expansion bounds. Images/audio upload directly to a private Supabase bucket, avoiding Vercel's function request-size limit. Source media is removed after extraction; abandoned files older than one day are cleaned when that user begins another upload. Owners should periodically clean abandoned objects through Storage administration if a user never returns.
 
 Postgres enforces 2 MB per account, 1,000 saves/hour, 30 AI units/user/day, 300 AI units/site/day, and 30 upload authorizations/user/day. AI costs: generation 1, OCR 2, transcription 5. Quotas use UTC days and are transactionally updated; provider failures may consume units. One AI lease per user expires after three minutes. These are request limits, not billing caps.
 
@@ -54,4 +54,6 @@ Space flips cards; arrows or 1/2/3 rate Again/Good/Easy. Again returns after one
 
 ## Verification
 
-`npm test` (24 passing tests), `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real OpenAI calls, direct media upload, and browser production checks remain pending. Vercel reports production READY and confirms the domain alias; automated HTTP verification was blocked by this environment’s proxy and connector inspection permissions.
+`npm test` (29 passing tests), `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real Google Gemini calls, direct media upload, and browser production checks remain pending. Vercel reports production READY and confirms the domain alias; automated HTTP verification was blocked by this environment’s proxy and connector inspection permissions.
+
+Gemini setup and current model availability: [GEMINI_SETUP.md](GEMINI_SETUP.md).

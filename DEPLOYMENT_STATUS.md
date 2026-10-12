@@ -31,7 +31,7 @@ Vercel confirms READY and the study-burger.vercel.app alias points to the projec
 
 - Configure Google provider in Supabase and allow https://study-burger.vercel.app/auth/callback; set GOOGLE_AUTH_ENABLED=true only after configuration.
 - Google provider callback: https://vrkygytugewkxsbyzluy.supabase.co/auth/v1/callback.
-- Configure OPENAI_API_KEY securely in Vercel, then redeploy.
+- Configure GEMINI_API_KEY securely in Vercel, then redeploy.
 - Verify login/logout, two-account isolation, upload, generation, and study flows in the browser.
 - Google sign-in and AI remain disabled until provider setup. No credentials are committed.
 

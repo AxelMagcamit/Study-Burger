@@ -1,6 +1,6 @@
 # Study Burger — release status
 
-Updated 2026-10-12. Production origin: https://study-burger.vercel.app.
+Updated 2026-10-13. Production origin: https://study-burger.vercel.app.
 
 ## Implemented and checked
 
@@ -16,7 +16,7 @@ Updated 2026-10-12. Production origin: https://study-burger.vercel.app.
 
 ## Verification
 
-- 24 Node tests passed: scheduling, streaks, validation, drafts, edited-card scheduling, text ingestion, cancellation, bounded request bodies, anonymous denial, OAuth PKCE cookie settings, fixed callback redirects, and verified Google identity restrictions.
+- 29 Node tests passed: scheduling, streaks, validation, drafts, edited-card scheduling, text ingestion, cancellation, bounded request bodies, anonymous denial, OAuth PKCE cookie settings, fixed callback redirects, and verified Google identity restrictions.
 - Next.js production build and TypeScript checks passed.
 - Live Supabase rollback-only tests passed: ownership, revisions, quota limits, job leases, uploads, private-table denial, anonymous denial. Test fixtures were rolled back.
 - Supabase security advisors reported only informational notices on three intentionally private deny-all tables; no warning/error findings.
@@ -27,7 +27,7 @@ Updated 2026-10-12. Production origin: https://study-burger.vercel.app.
 
 ### Google
 
-Live Supabase settings returned `google_enabled: false`; Vercel `GOOGLE_AUTH_ENABLED` is false. The connector does not expose Auth-provider configuration. No Google client secret is available to this session.
+The last Supabase provider check returned `google_enabled: false` (not rechecked during the Gemini migration); Vercel `GOOGLE_AUTH_ENABLED` is now true (checked during Gemini migration); real login remains unverified. The connector does not expose Auth-provider configuration. No Google client secret is available to this session.
 
 1. In https://console.cloud.google.com/auth/clients, create/configure a Web application OAuth client for Study Burger.
 2. Authorized origin: `https://study-burger.vercel.app`.
@@ -39,7 +39,7 @@ Live Supabase settings returned `google_enabled: false`; Vercel `GOOGLE_AUTH_ENA
 
 ### AI
 
-Vercel has no `OPENAI_API_KEY`. Configure it as a production secret at https://vercel.com/ponpon2/study-burger/settings/environment-variables and redeploy. Never put keys in chat, GitHub, or NEXT_PUBLIC variables. Then test generation, image OCR, audio transcription, cancellation, and cleanup with a real account.
+Migration: generation, image OCR, and audio transcription now use Google Gemini directly. Vercel has no `GEMINI_API_KEY`. Configure it as a production secret at https://vercel.com/ponpon2/study-burger/settings/environment-variables and redeploy. Never put keys in chat, GitHub, or NEXT_PUBLIC variables. Then test generation, image OCR, audio transcription, cancellation, and cleanup with a real account.
 
 The application currently supports the public sample workflow. It must not be described as ready for fully functional public accounts or AI until these gates pass.
 
@@ -48,3 +48,5 @@ The application currently supports the public sample workflow. It must not be de
 Use existing Vercel project `prj_oHCBziGESkSd6aQguc9zMUX8dGIG`, team `team_V97eEbdEhUlHykiiNxfqC0IW` (ponpon2). Keep `APP_URL=https://study-burger.vercel.app` and the existing redirects from Ponpon aliases. No new project/domain is needed.
 
 The connector's exact project ID with inferred scope works for deployments and settings. Explicit teamId, build-log access, and protected-fetch metadata have returned 403. No authenticated CLI is available. Source uploads work; GitHub automatic deployment is not verified. Check terminal READY and primary alias after each release.
+
+Gemini migration checks: 29 tests and production build passed. Provider requests are mocked; live generation/OCR/audio still require GEMINI_API_KEY. See GEMINI_SETUP.md for free-tier setup and Google model routing.

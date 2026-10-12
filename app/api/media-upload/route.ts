@@ -6,7 +6,7 @@ import {boundedBody,verifyMutation,jsonPrivate,SecurityError} from '@/lib/securi
 export async function POST(request:Request){return authRoute(request,async(_user,client)=>{
   verifyMutation(request);apiKey();
   const bytes=await boundedBody(request,2000);
-  const {ext,size}=z.object({ext:z.enum(['png','jpg','jpeg','mp3','mp4','mpeg','mpga','m4a','wav','webm']),size:z.number().int().min(1).max(20*1024*1024)}).strict().parse(JSON.parse(new TextDecoder().decode(bytes)));
+  const {ext,size}=z.object({ext:z.enum(['png','jpg','jpeg','mp3','mp4','mpeg','mpga','m4a','wav','webm']),size:z.number().int().min(1).max(12*1024*1024, 'Images and audio can be up to 12 MB.')}).strict().parse(JSON.parse(new TextDecoder().decode(bytes)));
   const {path}=await operation(client,'upload',{ext});
   // Clear abandoned uploads from earlier sessions through the Storage API.
   const {data:old}=await client.storage.from('study-media').list(_user.userId,{limit:100});
