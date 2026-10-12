@@ -1,54 +1,27 @@
-# Study Burger — release status
+# Release status
 
-Updated 2026-10-13. Production origin: https://study-burger.vercel.app.
+## Hand-drawn interface release
 
-## Implemented and checked
+Production origin: **https://study-burger.vercel.app**. The existing Vercel project and Ponpon alias redirects are preserved.
 
-- Concise landing page, dashboard labels, editor instructions, and study feedback.
-- Original cream, sunflower yellow, and charcoal palette retained.
-- Original Ponpon artwork preserved with welcome, reading, thinking, celebration, rest, concerned, and searching variants. SVGs are small, valid, and visually checked; animation respects reduced motion.
-- Google PKCE sign-in initiation and sign-out return actionable inline errors. Callback failures return to the app; authorization requires a verified Google identity.
-- New accounts start empty; sample decks remain available without signing in.
-- Unsaved account changes are stored in this tab, scoped by account ID, and offered for recovery. Revision conflicts require export or keeping saved data, preventing silent overwrites. Drafts clear after save, discard, or successful sign-out.
-- Deck editing warns before discarding changes. Back navigation retains cards. Partial AI generation is retained if a later chunk fails. Changed card content resets its review schedule.
-- Flashcard content is labeled for assistive technology. Space works after rating; focus returns to the next card. Again/Good/Easy scheduling and existing progress tracking remain intact.
-- Backup import, account storage limits, card limits, and unavailable AI uploads have actionable errors.
+### Changes
 
-## Verification
+- Sketchbook styling across welcome/sign-in, dashboard, decks, editor, study, progress, settings/help and privacy.
+- Original cream, sunflower yellow and charcoal colors, dark theme and Ponpon artwork preserved.
+- Local Kalam heading font, paper dots, irregular ink outlines, marker highlights and offset shadows; readable body and card text retained.
+- Reduced-motion and forced-color handling, responsive layouts and visible keyboard focus.
+- Documentation organized under `docs/`, with root setup links retained. No database, authentication, AI or scheduling changes.
 
-- 30 Node tests passed: scheduling, streaks, validation, drafts, edited-card scheduling, text ingestion, cancellation, bounded request bodies, anonymous denial, OAuth PKCE cookie settings, fixed callback redirects, and verified Google identity restrictions.
-- Next.js production build and TypeScript checks passed.
-- Live Supabase rollback-only tests passed: ownership, revisions, quota limits, job leases, uploads, private-table denial, anonymous denial. Test fixtures were rolled back.
-- Supabase security advisors reported only informational notices on three intentionally private deny-all tables; no warning/error findings.
-- OAuth tests use a controlled provider fixture. They do not constitute a real Google login test.
-- Browser-based desktop/tablet/mobile and live console verification were unavailable in this environment. Responsive rules, semantic controls, focus handling, and reduced-motion rules were reviewed in source, not confirmed in a browser.
+### Verification for this release
 
-## Launch blockers — owner configuration required
+30 Node tests passed. The Next.js production build, TypeScript checks and whitespace validation passed. No functional server or data changes were introduced. Browser visual QA is not available in the current managed environment; responsive and accessibility rules are reviewed in source only.
 
-### Google
+### Existing functionality and remaining checks
 
-The last Supabase provider check returned `google_enabled: false` (not rechecked during the Gemini migration); Vercel `GOOGLE_AUTH_ENABLED` is now true (checked during Gemini migration); real login remains unverified. The connector does not expose Auth-provider configuration. No Google client secret is available to this session.
+The owner reported that everything works after the Google/Gemini setup. Production Google enablement and presence of a Gemini secret were confirmed in the preceding release; secret values were not inspected. Older statements that both integrations are disabled have been removed.
 
-1. In https://console.cloud.google.com/auth/clients, create/configure a Web application OAuth client for Study Burger.
-2. Authorized origin: `https://study-burger.vercel.app`.
-3. Google authorized redirect: `https://vrkygytugewkxsbyzluy.supabase.co/auth/v1/callback`.
-4. In https://supabase.com/dashboard/project/vrkygytugewkxsbyzluy/auth/providers, enable Google and enter its client ID and secret. Keep nonce checks enabled.
-5. Supabase URL configuration: Site URL `https://study-burger.vercel.app`; allow `https://study-burger.vercel.app/auth/callback`.
-6. In Vercel production, set `GOOGLE_AUTH_ENABLED=true` and redeploy the existing project.
-7. Verify real sign-in, new-account creation, reload, saving, logout, and two-account isolation. Google manages password recovery; Study Burger has no separate password.
+That report does not substitute for independently recorded real Google registration/login/logout, two-account isolation, live OCR/audio, cancellation and cleanup tests. Follow [the checklist](docs/testing.md) before claiming those gates independently verified.
 
-### AI
+Earlier checks passed for database ownership, revision conflicts, quota enforcement, upload ownership and anonymous denial using rollback-only SQL tests. They were not rerun for this visual-only release.
 
-Migration: generation, image OCR, and audio transcription now use Google Gemini directly. Vercel now has `GEMINI_API_KEY` (value not inspected). Real app AI remains unverified. Configure or replace it as a production secret at https://vercel.com/ponpon2/study-burger/settings/environment-variables and redeploy. Never put keys in chat, GitHub, or NEXT_PUBLIC variables. Then test generation, image OCR, audio transcription, cancellation, and cleanup with a real account.
-
-The application currently supports the public sample workflow. It must not be described as ready for fully functional public accounts or AI until these gates pass.
-
-## Deployment
-
-Use existing Vercel project `prj_oHCBziGESkSd6aQguc9zMUX8dGIG`, team `team_V97eEbdEhUlHykiiNxfqC0IW` (ponpon2). Keep `APP_URL=https://study-burger.vercel.app` and the existing redirects from Ponpon aliases. No new project/domain is needed.
-
-The connector's exact project ID with inferred scope works for deployments and settings. Explicit teamId, build-log access, and protected-fetch metadata have returned 403. No authenticated CLI is available. Source uploads work; GitHub automatic deployment is not verified. Check terminal READY and primary alias after each release.
-
-Gemini migration checks: 30 tests and production build passed. Provider requests are mocked; live generation/OCR/audio still require GEMINI_API_KEY. See GEMINI_SETUP.md for free-tier setup and Google model routing.
-
-Gemini 3.8 is now the application default. The owner confirmed a playground response, but the earlier app generation failed with a generic provider error. Model correction and clearer temporary-provider errors are tested; production end-to-end AI must still pass.
+GitHub automatic deployment remains unverified. Production releases use the exact committed source uploaded to the existing Vercel project. See [deployment](docs/deployment.md).

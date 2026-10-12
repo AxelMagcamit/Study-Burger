@@ -1,0 +1,197 @@
+/* Study Burger sketchbook theme.
+ * Import last. Behavior, card transforms and chart geometry live in the base styles.
+ * Decorative marks use pseudo-elements; never place essential text in them.
+ */
+@font-face {
+  font-family: 'Kalam';
+  src: url('/fonts/kalam-latin.woff') format('woff');
+  font-style: normal; font-weight: 400; font-display: swap;
+}
+:root {
+  --ink: #353630;
+  --pencil: #858174;
+  --paper-dot: #35363012;
+  --sketch-radius: 12px 19px 14px 8px / 15px 10px 19px 12px;
+  --sketch-shadow: 3px 4px 0 var(--ink);
+  --hand: 'Kalam', 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', 'Comic Sans MS', cursive;
+}
+:root[data-theme=dark] {
+  --ink: #d6d1bd;
+  --pencil: #949181;
+  --paper-dot: #f3efe110;
+}
+body {
+  background-image: radial-gradient(var(--paper-dot) .8px, transparent .8px);
+  background-size: 20px 20px;
+}
+::selection { background: var(--sunflower); color: #353630; }
+h1, h2, h3 { text-wrap: balance; }
+button, a, input, textarea, select { outline-offset: 5px; }
+:where(button,a,input,textarea,select):focus-visible {
+  outline: 3px solid var(--green);
+}
+:where(.home-intro h1, .page-heading h1, .focus-copy h2, .study-heading h1,
+ .session-complete h1, .modal-head h2, .privacy-page h1) {
+  font-family: var(--hand);
+  font-weight: 400;
+  letter-spacing: -.035em;
+}
+.button, .rating, .workspace, .search-box,
+.field input, .field textarea, .field select {
+  border: 1.5px solid var(--ink);
+  border-radius: var(--sketch-radius);
+}
+.button, .app-shell .button { border-radius: var(--sketch-radius); box-shadow: 2px 3px 0 var(--ink); }
+.button.primary, .story-nav-cta { background: var(--sunflower); color: #353630; }
+.button.primary:hover { background: #ffdf70; }
+.button.dark-button { background: #353630; color: #fffef9; border-color: #353630; }
+.button.secondary { background: var(--surface); }
+.button:disabled { box-shadow: none; }
+.text-button { text-underline-offset: 5px; }
+.icon-button { border-radius: 9px 13px 8px 12px; }
+kbd { border: 1px solid var(--pencil); border-bottom-width: 2px; border-radius: 4px; }
+
+/* Cover: one welcome panel, one clear account action. */
+.compact-home { background: transparent; }
+.compact-home .story-header { border-bottom: 2px solid var(--ink); }
+.story-brand, .sidebar .brand { transform: rotate(-2deg); }
+.home-main { gap: 72px; padding-top: 64px; padding-bottom: 58px; }
+.home-eyebrow { display: inline-block; font-size: 11px; letter-spacing: 1px; }
+.home-intro h1 { font-family: var(--hand); font-size: clamp(48px, 5.7vw, 72px); line-height: 1.22; }
+.home-intro h1 em {
+  color: var(--text); font-style: normal;
+  background: linear-gradient(transparent 65%, var(--hero) 65%, var(--hero) 91%, transparent 91%);
+  padding: 0 5px;
+  box-decoration-break: clone;
+}
+.home-intro > p { color: var(--text); max-width: 340px; }
+.compact-home .welcome-login::before {
+  content: ''; position: absolute; height: 20px; width: 74px;
+  background: var(--sunflower); opacity: .7; pointer-events: none;
+  top: -12px; left: calc(50% - 37px); transform: rotate(-4deg);
+  clip-path: polygon(3% 0,100% 5%,97% 100%,0 92%);
+}
+.compact-home .welcome-login {
+  position: relative; margin-top: 8px; padding: 34px 30px;
+  border: 2px solid var(--ink); border-radius: 18px 9px 20px 12px;
+  background: var(--surface); box-shadow: 6px 7px 0 var(--hero), 7px 8px 0 var(--ink);
+}
+.compact-home .welcome-login h2 { font-family: var(--hand); font-size: 34px; font-weight: 400; }
+.signin-portrait { border: 1.5px dashed var(--pencil); border-radius: 45% 52% 46% 54%; }
+.compact-home .welcome-login .google-button {
+  border: 1.5px solid #353630; border-radius: 7px 12px 8px 10px;
+  box-shadow: 2px 3px 0 #353630;
+}
+.compact-home .welcome-login .google-button:not(:disabled):hover { box-shadow: 3px 4px 0 #353630; }
+.signin-preview { border-top: 1px dashed var(--pencil); }
+.home-steps { border-top: 1.5px dashed var(--pencil); gap: 35px; padding-top: 30px; }
+.home-steps > div > svg { padding: 8px; width: 42px; height: 42px; border: 1.5px solid var(--ink); border-radius: 45% 52% 43% 55%; background: var(--hero); color: var(--text); }
+.home-steps h2 { font-family: var(--hand); font-size: 20px; }
+.compact-footer { border-top: 1px dashed var(--pencil); }
+
+/* Workspace: notebook navigation and stacked index cards. */
+.sidebar { border-right: 2px solid var(--ink); background: var(--sidebar); }
+.workspace { background: var(--surface); box-shadow: 2px 2px 0 var(--track); }
+.app-shell .nav-item { border: 1.5px solid transparent; border-radius: 8px 14px 7px 11px; }
+.app-shell .nav-item.selected { border-color: var(--ink); color: var(--text); background: var(--hero); box-shadow: 2px 2px 0 var(--ink); }
+.topbar { border-bottom: 1.5px solid var(--ink); background: var(--bg); }
+.page-heading h1 { font-family: var(--hand); font-size: 38px; }
+.page-heading h1 span { font-family: inherit; font-weight: inherit; font-style: normal; }
+.stat-card { border: 1.5px solid var(--pencil); border-radius: var(--sketch-radius); box-shadow: 2px 3px 0 var(--track); }
+.stat-value { font-family: var(--hand); font-size: 32px; }
+.stat-icon { border: 1px solid var(--pencil); border-radius: 45% 52% 46% 51%; color: var(--text); }
+.focus-banner { border: 2px solid var(--ink); border-radius: 14px 23px 12px 17px; box-shadow: 4px 4px 0 var(--ink); background: var(--hero); }
+.focus-copy h2 { font-family: var(--hand); font-size: 38px; }
+.focus-copy p { color: var(--text); }
+.focus-copy > small { color: var(--muted); }
+.focus-copy .pill { border-bottom: 2px solid var(--pencil); padding-bottom: 4px; }
+.focus-ponpon { filter: drop-shadow(2px 3px 0 #35363015); }
+.section-head h2, .section-head h3 { font-family: var(--hand); font-size: 23px; }
+.deck-controls { border-bottom: 1px dashed var(--pencil); }
+.tabs button.active::after { height: 4px; border-radius: 50% 20% 40% 30%; background: var(--sunflower); }
+.deck-grid { gap: 20px; }
+.deck-card { position: relative; border: 1.5px solid var(--ink); border-radius: 8px 13px 7px 12px; box-shadow: 3px 4px 0 var(--track), 4px 5px 0 var(--ink); }
+.deck-card h3 { font-family: var(--hand); font-size: 25px; overflow-wrap: anywhere; }
+.deck-card-top { border-bottom: 1px dashed var(--border); padding-bottom: 12px; margin-bottom: 14px; }
+.deck-icon { border: 1px solid var(--pencil); border-radius: 11px 7px 14px 8px; color: var(--text); }
+.deck-footer { border-top-style: dashed; }
+.due-badge, .caught-badge, .count-badge, .nav-count { border-radius: 5px 8px 4px 7px; }
+.panel, .app-shell .panel { border: 1.5px solid var(--pencil); border-radius: 15px 9px 18px 11px; box-shadow: 2px 3px 0 var(--track); }
+.goal-ring strong { font-family: var(--hand); }
+.bar-track, .mastery-bar { border-radius: 5px 8px 4px 7px; }
+.quick-upload { border: 1.5px dashed var(--pencil); border-radius: var(--sketch-radius); background: var(--surface); }
+.quick-icon { background: var(--hero); border: 1px solid var(--ink); border-radius: 50% 44% 51% 45%; }
+.page-footer, .profile { border-top-style: dashed; }
+.empty-state { border: 1.5px dashed var(--pencil); border-radius: var(--sketch-radius); background: var(--surface); padding: 28px; }
+.empty-state h3 { font-family: var(--hand); font-size: 26px; }
+.toast { border: 1.5px solid var(--ink); border-radius: var(--sketch-radius); box-shadow: 3px 4px 0 var(--ink); }
+.demo-notice, .storage-warning { border-bottom: 1px dashed var(--pencil); }
+
+/* Editor, settings, help and recovery dialogs share the same paper surface. */
+.modal { border: 2px solid var(--ink); border-radius: 14px 8px 19px 11px; box-shadow: 7px 8px 0 #35363050; }
+.modal::backdrop { background: #24251f85; backdrop-filter: blur(3px); }
+.modal-head { border-bottom: 1.5px dashed var(--pencil); background: var(--bg); }
+.modal-head h2 { font-family: var(--hand); font-size: 26px; }
+.modal-footer { border-top: 1.5px dashed var(--pencil); }
+.steps .active { color: var(--text); background: var(--hero); border-radius: 3px 8px 4px 7px; padding: 3px 8px; }
+.drop-zone { border: 2px dashed var(--pencil); border-radius: 15px 9px 19px 10px; background: var(--bg); }
+.drop-zone.drag { border-color: var(--green); background: var(--hero); }
+.drop-zone h3 { font-family: var(--hand); font-size: 26px; }
+.upload-icon { border: 1.5px solid var(--ink); border-radius: 45% 53% 43% 51%; background: var(--hero); }
+.field input, .field textarea, .field select { border-color: var(--pencil); }
+.field textarea { line-height: 1.8; }
+.edit-card { border: 1.5px solid var(--pencil); border-radius: var(--sketch-radius); box-shadow: 2px 3px 0 var(--track); }
+.edit-card-number { font-family: var(--hand); font-size: 20px; }
+.notice, .error { border-radius: var(--sketch-radius); border-width: 1.5px; }
+
+/* Study: keep the existing 3D transform exclusively on .flashcard. */
+.study-top { border-bottom: 1px dashed var(--pencil); padding-bottom: 16px; }
+.study-heading h1 { font-family: var(--hand); font-size: 38px; overflow-wrap: anywhere; }
+.study-progress { height: 7px; border: 1px solid var(--pencil); border-radius: 6px 3px 7px 4px; }
+.study-progress span { background: var(--sunflower); }
+.card-face { border: 2px solid var(--ink); border-radius: 13px 21px 12px 17px; box-shadow: 5px 6px 0 var(--track), 6px 7px 0 var(--ink); background-color: var(--surface); }
+.card-face.front { background-image: linear-gradient(transparent calc(100% - 1px), var(--paper-dot) 0); background-size: 100% 32px; }
+.card-face.back { background: var(--hero); }
+.card-label { color: var(--text); border-bottom: 2px solid var(--pencil); padding-bottom: 5px; }
+.card-text { font-family: inherit; letter-spacing: -.02em; }
+.rating-section { padding-top: 12px; }
+.rating { box-shadow: 2px 3px 0 var(--ink); border-width: 1.5px; }
+.rating.again { color: var(--text); background: var(--peach); }
+.rating.good { color: var(--text); background: var(--hero); }
+.rating.easy { color: var(--text); background: var(--blue); }
+.rating:disabled { box-shadow: none; }
+.session-stats { border: 1.5px solid var(--ink); border-radius: var(--sketch-radius); box-shadow: 3px 4px 0 var(--track); }
+.session-stats strong { font-family: var(--hand); }
+.session-complete h1 { font-family: var(--hand); }
+.privacy-page { background: var(--surface); border: 1.5px solid var(--pencil); border-radius: var(--sketch-radius); box-shadow: 4px 5px 0 var(--track); }
+.privacy-page h1, .privacy-page h2 { font-family: var(--hand); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .button:hover:not(:disabled), .rating:hover:not(:disabled) { transform: translateY(-2px); }
+  .button:active:not(:disabled), .rating:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
+  .deck-card:hover { transform: translateY(-3px); box-shadow: 4px 6px 0 var(--track), 5px 7px 0 var(--ink); }
+}
+@media (max-width: 1100px) {
+  .home-main { gap: 40px; }
+  .page-heading h1, .focus-copy h2 { font-size: 33px; }
+}
+@media (max-width: 760px) {
+  .home-main { padding: 32px 24px 38px; gap: 34px; }
+  .home-intro { padding-right: 0; }
+  .home-intro h1 { font-size: clamp(39px, 9vw, 52px); }
+  .home-intro > p { max-width: 100%; }
+  @media (max-width: 430px) {
+  .home-intro { padding-right: 0; }
+  .compact-home .welcome-login h2 { font-size: 29px; }
+  .home-eyebrow { font-size: 10px; }
+  .page-heading { align-items: flex-start; flex-wrap: wrap; }
+  .stat-value { font-size: 27px; }
+  .study-heading h1 { font-size: 27px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media (forced-colors: active) {
+  .button, .rating, .card-face, .deck-card, .panel { border-color: ButtonText; box-shadow: none; }
+  .welcome-login::before { display: none; }
+}
