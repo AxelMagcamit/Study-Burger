@@ -5,7 +5,7 @@ React 19, Next.js 16, Tailwind, Supabase Auth/Postgres/Storage, and OpenAI.
 ## Current deployment status
 
 The existing Sites publication remains at https://study-burger.crispbook.chatgpt.site.
-Vercel production deployment is READY at https://study-burger.vercel.app. Source commit: `434b2f78c50a0b8e3abee60e1f06a9b6e5151d13`. The deployment uses the exact committed source uploaded through the Vercel API; GitHub automatic deployment is not verified.
+Vercel production deployment is READY at https://study-burger.vercel.app. See RELEASE_STATUS.md for current checks and launch blockers. The deployment uses the exact committed source uploaded through the Vercel API; GitHub automatic deployment is not verified.
 
 - Vercel project: `prj_oHCBziGESkSd6aQguc9zMUX8dGIG` (`study-burger`)
 - Vercel account/team: `team_V97eEbdEhUlHykiiNxfqC0IW` (`ponpon2`)
@@ -54,4 +54,4 @@ Space flips cards; arrows or 1/2/3 rate Again/Good/Easy. Again returns after one
 
 ## Verification
 
-`npm test`, `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real OpenAI calls, direct media upload, and browser production checks remain pending. Vercel reports production READY and confirms the domain alias; automated HTTP verification was blocked by this environment’s proxy and connector inspection permissions.
+`npm test` (24 passing tests), `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real OpenAI calls, direct media upload, and browser production checks remain pending. Vercel reports production READY and confirms the domain alias; automated HTTP verification was blocked by this environment’s proxy and connector inspection permissions.

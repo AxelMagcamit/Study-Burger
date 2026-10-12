@@ -15,3 +15,7 @@ supabase/verify-security.sql checks ownership, revision conflicts, quota exhaust
 ## Operational limits
 
 No absolute-security claim. The operator/provider can access stored data; this is not end-to-end encryption. Complete Google consent configuration and actual multi-account login tests before inviting users. Set provider budget controls before enabling AI. Admins should remove abandoned media for users who do not return, and clean expired upload authorization rows periodically. Account deletion must remove stored media through the Storage API before deleting the authentication account; database content cascades on auth-user deletion. Never delete Storage metadata directly with SQL.
+
+## Unsaved work
+
+Unsaved account edits are temporarily retained in per-account sessionStorage in the current browser tab. They are not encrypted browser storage. Recovery requires the account to be signed in, and matching server revision is required before restoring. Conflicting drafts can be exported without overwriting newer saved data. Successful save, explicit discard, and successful sign-out remove the draft. Server authorization and RLS remain authoritative.

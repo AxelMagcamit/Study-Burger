@@ -3,11 +3,11 @@ import { z } from 'zod';
 export const generationInput=z.object({text:z.string().trim().min(40).max(16000),count:z.number().int().min(1).max(30),style:z.enum(['qa','cloze'])});
 const cardsOutput=z.object({cards:z.array(z.object({question:z.string().trim().min(1).max(1500),answer:z.string().trim().min(1).max(3000)})).min(1).max(30)});
 export class APIError extends Error { status:number; constructor(message:string,status=400){super(message);this.status=status;} }
-export function apiKey(){const key=process.env.OPENAI_API_KEY;if(!key)throw new APIError('AI is not connected yet. Configure OPENAI_API_KEY on the server. You can still create cards manually and study all your decks.',503);return key;}
+export function apiKey(){const key=process.env.OPENAI_API_KEY;if(!key)throw new APIError('AI is unavailable. You can create cards manually.',503);return key;}
 export function checkOrigin(request:Request){const origin=request.headers.get('origin');if(origin&&origin!==new URL(request.url).origin)throw new APIError('Cross-origin requests are not allowed.',403);}
 export async function openai(path:string,body:unknown,signal?:AbortSignal){
  const isForm=body instanceof FormData;const response=await fetch(`https://api.openai.com/v1/${path}`,{method:'POST',headers:{Authorization:`Bearer ${apiKey()}`,...(!isForm?{'Content-Type':'application/json'}:{})},body:isForm?body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000)});
- if(!response.ok){if(response.status===429)throw new APIError('The AI service is at its usage limit. Check your API quota or try again shortly.',429);if(response.status===401)throw new APIError('The server API key was rejected. Please check its configuration.',503);throw new APIError('The AI service could not process this request. Please try again.',502);}
+ if(!response.ok){if(response.status===429)throw new APIError('AI is busy or at its usage limit. Try again later.',429);if(response.status===401)throw new APIError('AI is temporarily unavailable. Please try again later.',503);throw new APIError('The AI service could not process this request. Please try again.',502);}
  return response.json();
 }
 export function outputText(result:unknown){

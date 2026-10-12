@@ -12,6 +12,6 @@ export function authClient(request:Request){
   cookies:{getAll:()=>parseCookieHeader(request.headers.get('cookie')||'').map(c=>({name:c.name,value:c.value||''})),setAll:cookies=>{changes.push(...cookies);}}
  });
  function finish(response:Response){const headers=new Headers(response.headers);for(const [name,value] of Object.entries(PRIVATE_HEADERS))headers.set(name,value);for(const c of changes)headers.append('Set-Cookie',serializeCookieHeader(c.name,c.value,{...c.options,path:'/',httpOnly:true,sameSite:'lax',secure}));return new Response(response.body,{status:response.status,headers});}
- async function user():Promise<AccountUser|null>{const {data,error}=await client.auth.getUser();if(error||!data.user)return null;const u=data.user;if(!u.identities?.some(i=>i.provider==='google')||!u.email_confirmed_at)return null;return {userId:u.id,email:u.email||'',displayName:typeof u.user_metadata.full_name==='string'?u.user_metadata.full_name:u.email?.split('@')[0]||'Learner'};}
+ async function user():Promise<AccountUser|null>{const {data,error}=await client.auth.getUser();if(error){if(error.name==='AuthRetryableFetchError'||(error.status&&error.status>=500))throw new SecurityError('Sign-in service is unavailable. Please retry.',503);return null;}if(!data.user)return null;const u=data.user;if(!u.identities?.some(i=>i.provider==='google')||!u.email_confirmed_at)return null;return {userId:u.id,email:u.email||'',displayName:typeof u.user_metadata.full_name==='string'?u.user_metadata.full_name:u.email?.split('@')[0]||'Learner'};}
  return {client,finish,user};
 }

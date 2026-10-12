@@ -3,11 +3,12 @@ export const MAX_FILE=20*1024*1024;
 export const MAX_TEXT=120000;
 function validateText(text:string){const clean=text.replace(/\r/g,'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();if(!clean)throw new Error('No readable text found. For scanned documents, upload individual pages as PNG or JPG for OCR.');if(clean.length>MAX_TEXT)throw new Error('This file contains more than 120,000 characters. Split it into smaller chapters and upload each separately.');return clean;}
 export async function extractFile(file:File,onProgress:(s:string)=>void,signal:AbortSignal):Promise<string>{
+ signal.throwIfAborted();
  if(!file.size)throw new Error('This file is empty.');
  if(file.size>MAX_FILE)throw new Error('Files can be up to 20 MB. Please split or compress this file.');
  const ext=file.name.split('.').pop()?.toLowerCase();
  onProgress('Reading your file…');
- if(ext==='txt'||ext==='md')return validateText(await file.text());
+ if(ext==='txt'||ext==='md'){const text=await file.text();signal.throwIfAborted();return validateText(text);}
  if(ext==='docx'||ext==='pptx'){
  const {default:JSZip}=await import('jszip');const zip=await JSZip.loadAsync(await file.arrayBuffer());
  const names=Object.keys(zip.files).filter(n=>ext==='docx'?n==='word/document.xml':/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
