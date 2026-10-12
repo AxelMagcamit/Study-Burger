@@ -5,12 +5,12 @@ React 19, Next.js 16, Tailwind, Supabase Auth/Postgres/Storage, and OpenAI.
 ## Current deployment status
 
 The existing Sites publication remains at https://study-burger.crispbook.chatgpt.site.
-This branch is the Vercel migration. It is not yet deployed: Vercel project creation succeeded, but the connected credential was denied access to its `ponpon2` scope during domain assignment.
+Vercel production deployment is READY at https://study-burger-ponpon.vercel.app. Source commit: `434b2f78c50a0b8e3abee60e1f06a9b6e5151d13`. The deployment uses the exact committed source uploaded through the Vercel API; GitHub automatic deployment is not verified.
 
 - Vercel project: `prj_oHCBziGESkSd6aQguc9zMUX8dGIG` (`study-burger`)
 - Vercel account/team: `team_V97eEbdEhUlHykiiNxfqC0IW` (`ponpon2`)
 - Supabase project: `vrkygytugewkxsbyzluy` (Tokyo)
-- Requested alias: `study-burger.vercel.app`; availability/assignment not confirmed.
+- Primary application origin: `https://study-burger-ponpon.vercel.app` (APP_URL).
 - Supabase schema is already applied to the project above. Do not replay it there.
 - Google provider and OpenAI key still require owner configuration. No credentials are included.
 
@@ -24,7 +24,7 @@ For a new Supabase project, apply supabase/schema.sql once through the SQL edito
 
 ## Vercel deployment
 
-Resolve access to the existing project above, then connect this GitHub repository to the existing Vercel project. Alternatively deploy the reviewed source with the authenticated Vercel CLI. Do not create duplicate projects.
+Use the existing project above. The connector succeeds with the exact project ID and its token-inferred team scope; explicitly passing teamId produced a 403. Some build-log and protected-fetch operations still return 403. Direct source deployment succeeded after Git import returned git_info_fail. Connect GitHub automatic deployment in Vercel before relying on push-to-deploy. Do not create duplicate projects.
 
 Settings: Next.js; Node 24; install `npm ci`; build `npm run build`; region Tokyo (`hnd1`). Configure server environment variables from .env.example. Set APP_URL to the actual assigned production URL. Production must be publicly accessible; do not remove protection from unrelated projects. Update Google and Supabase redirects to that exact domain, then verify login/logout with two distinct Google accounts.
 
@@ -54,4 +54,4 @@ Space flips cards; arrows or 1/2/3 rate Again/Good/Easy. Again returns after one
 
 ## Verification
 
-`npm test`, `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real OpenAI calls, direct media upload, and Vercel production checks remain pending. Never represent the migration as live until Vercel reports success.
+`npm test`, `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real OpenAI calls, direct media upload, and browser production checks remain pending. Vercel reports production READY and confirms the domain alias; automated HTTP verification was blocked by this environment’s proxy and connector inspection permissions.

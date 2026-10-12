@@ -1,32 +1,36 @@
 # Deployment checkpoint
 
-Prepared on 2026-10-12 for Axel Magcamit.
+Updated 2026-10-12 for Axel Magcamit.
 
-## Target
+## Production
 
-- Existing public site (unchanged): https://study-burger.crispbook.chatgpt.site
-- User requested Vercel hosting and a vercel.app domain, retaining Ponpon UI.
-- Vercel project created: prj_oHCBziGESkSd6aQguc9zMUX8dGIG (study-burger).
-- Its returned account ID: team_V97eEbdEhUlHykiiNxfqC0IW, scope ponpon2.
-- Assigning study-burger.vercel.app returned HTTP 403: the connected credential is not authorized for ponpon2. Domain availability and assignment are unconfirmed. Do not retry under a different default scope to bypass this restriction.
-- No Vercel deployment or Vercel environment-variable configuration was attempted after this denial. No authenticated Vercel CLI is available locally.
+- URL: https://study-burger-ponpon.vercel.app
+- Vercel status: READY; target production; region hnd1; Next.js / Node 24.
+- Project: prj_oHCBziGESkSd6aQguc9zMUX8dGIG; team: team_V97eEbdEhUlHykiiNxfqC0IW (ponpon2).
+- Deployment: dpl_HJNedJyWogofjZbQMjjZBYphKFbu.
+- Source commit: 434b2f78c50a0b8e3abee60e1f06a9b6e5151d13, https://github.com/AxelMagcamit/Study-Burger.
+- Public access configured: Vercel SSO/password/IP protection disabled on this project.
+- APP_URL, Supabase URL/publishable key, Google-disabled flag, and quota configuration saved for production.
+- Original Sites publication remains unchanged: https://study-burger.crispbook.chatgpt.site.
 
-## Completed
+## Resolution
 
-- Standard Next.js 16 / Node 24 build, npm lockfile, Vercel Tokyo config, security headers.
-- Supabase RLS-protected account storage and revision-aware save RPC.
-- Private atomic quota/lease functions and signed private media uploads, supporting 20 MB files without proxying upload bytes through a Vercel Function.
-- Supabase migration study_burger_accounts_and_media applied to vrkygytugewkxsbyzluy. Do not reapply schema.sql there.
-- Rollback-only SQL integration tests passed. Security advisors returned only expected informational deny-all private-table notices.
-- Node tests (11) and production build passed. No browser/end-to-end Google, media, or OpenAI verification yet.
-- Original Sites source/main and public deployment remain unchanged.
+The exact project was accessible when optional teamId was omitted and the credential’s existing scope was used. Returned accountId matched the intended team. Explicit teamId requests failed with 403. Project configuration, environment creation, and deployment now succeed. Some log/protected-fetch endpoints still return 403, so connector access is not universally repaired.
 
-## Next actions
+Git import failed with git_info_fail. Uploading the identical 122 committed source files directly succeeded. Automatic deployment on future GitHub pushes is not verified.
 
-1. Resolve authorized Vercel access to this exact project/team; do not create duplicate projects.
-2. Assign an available vercel.app production alias and configure SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, APP_URL, GOOGLE_AUTH_ENABLED (false until provider setup), and OPENAI_API_KEY when available.
-3. Deploy reviewed source via Vercel file API or connected GitHub repo. GitHub source repository: https://github.com/AxelMagcamit/Study-Burger.git (main).
-4. Update Google origin and Supabase callback allowlist for the actual Vercel domain. Google OAuth callback remains https://vrkygytugewkxsbyzluy.supabase.co/auth/v1/callback.
-5. Set public production access for this project, verify login and two-account isolation, test media/AI, and only then report the new domain as live.
+Vercel confirms READY and the Ponpon alias points to this deployment. Independent HTTP verification was blocked by the execution environment’s proxy; connector web-fetch failed while reading protection-bypass metadata. End-to-end browser verification remains pending.
 
-This archive contains no credentials. Supabase's publishable key can be fetched again through the connected project; Google secrets and OpenAI keys must be configured securely by the owner.
+## Completed checks
+
+- Production build and 11 Node tests passed before upload.
+- Supabase rollback-only ownership, revision, quota, and authorization tests passed.
+- Supabase migration study_burger_accounts_and_media already applied to vrkygytugewkxsbyzluy; do not reapply.
+
+## Remaining configuration
+
+- Configure Google provider in Supabase and allow https://study-burger-ponpon.vercel.app/auth/callback; set GOOGLE_AUTH_ENABLED=true only after configuration.
+- Google provider callback: https://vrkygytugewkxsbyzluy.supabase.co/auth/v1/callback.
+- Configure OPENAI_API_KEY securely in Vercel, then redeploy.
+- Verify login/logout, two-account isolation, upload, generation, and study flows in the browser.
+- Google sign-in and AI remain disabled until provider setup. No credentials are committed.
