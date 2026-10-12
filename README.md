@@ -54,6 +54,6 @@ Space flips cards; arrows or 1/2/3 rate Again/Good/Easy. Again returns after one
 
 ## Verification
 
-`npm test` (29 passing tests), `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real Google Gemini calls, direct media upload, and browser production checks remain pending. Vercel reports production READY and confirms the domain alias; automated HTTP verification was blocked by this environment’s proxy and connector inspection permissions.
+`npm test` (30 passing tests), `npm run typecheck`, `npm run build`. The rollback-only SQL checks have passed against the connected Supabase project. Browser end-to-end Google login, real Google Gemini calls, direct media upload, and browser production checks remain pending. Vercel reports production READY and confirms the domain alias; automated HTTP verification was blocked by this environment’s proxy and connector inspection permissions.
 
 Gemini setup and current model availability: [GEMINI_SETUP.md](GEMINI_SETUP.md).

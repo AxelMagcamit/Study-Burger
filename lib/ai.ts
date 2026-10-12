@@ -6,8 +6,8 @@ export class APIError extends Error { status:number; constructor(message:string,
 export function apiKey(){const key=process.env.GEMINI_API_KEY?.trim();if(!key)throw new APIError('AI is unavailable. You can create cards manually.',503);return key;}
 export function checkOrigin(request:Request){const origin=request.headers.get('origin');if(origin&&origin!==new URL(request.url).origin)throw new APIError('Cross-origin requests are not allowed.',403);}
 export function geminiModel(){
- const model=process.env.GEMINI_MODEL?.trim()||'gemini-3.7-flash';
- if(!['gemini-2.5-flash','gemini-3.7-flash'].includes(model))throw new APIError('The AI model configuration is unavailable. Please contact the site owner.',503);
+ const model=process.env.GEMINI_MODEL?.trim()||'gemini-3.8-flash';
+ if(!['gemini-2.5-flash','gemini-3.7-flash','gemini-3.8-flash'].includes(model))throw new APIError('The AI model configuration is unavailable. Please contact the site owner.',503);
  return model;
 }
 export type GeminiPart={text:string}|{inlineData:{mimeType:string;data:string}};
@@ -23,6 +23,10 @@ export async function gemini(instructions:string,parts:GeminiPart[],signal?:Abor
   }})
  });
  if(!response.ok){
+  // Only metadata is logged; never credentials, source material, or provider response bodies.
+  console.warn("Gemini request failed",{status:response.status,model});
+  if(response.status===503)throw new APIError("Gemini is temporarily busy. Please try again shortly.",503);
+  if(response.status===500)throw new APIError("Gemini encountered a temporary error. Please try again shortly.",502);
   if(response.status===429)throw new APIError('AI limit reached. Try again later or create cards manually.',429);
   if([401,403,404].includes(response.status))throw new APIError('AI is unavailable. The site owner needs to check the Gemini key and model access.',503);
   if(response.status===400)throw new APIError('Gemini could not read this input. Try a smaller file or another format.',422);

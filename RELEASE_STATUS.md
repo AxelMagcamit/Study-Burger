@@ -16,7 +16,7 @@ Updated 2026-10-13. Production origin: https://study-burger.vercel.app.
 
 ## Verification
 
-- 29 Node tests passed: scheduling, streaks, validation, drafts, edited-card scheduling, text ingestion, cancellation, bounded request bodies, anonymous denial, OAuth PKCE cookie settings, fixed callback redirects, and verified Google identity restrictions.
+- 30 Node tests passed: scheduling, streaks, validation, drafts, edited-card scheduling, text ingestion, cancellation, bounded request bodies, anonymous denial, OAuth PKCE cookie settings, fixed callback redirects, and verified Google identity restrictions.
 - Next.js production build and TypeScript checks passed.
 - Live Supabase rollback-only tests passed: ownership, revisions, quota limits, job leases, uploads, private-table denial, anonymous denial. Test fixtures were rolled back.
 - Supabase security advisors reported only informational notices on three intentionally private deny-all tables; no warning/error findings.
@@ -39,7 +39,7 @@ The last Supabase provider check returned `google_enabled: false` (not rechecked
 
 ### AI
 
-Migration: generation, image OCR, and audio transcription now use Google Gemini directly. Vercel has no `GEMINI_API_KEY`. Configure it as a production secret at https://vercel.com/ponpon2/study-burger/settings/environment-variables and redeploy. Never put keys in chat, GitHub, or NEXT_PUBLIC variables. Then test generation, image OCR, audio transcription, cancellation, and cleanup with a real account.
+Migration: generation, image OCR, and audio transcription now use Google Gemini directly. Vercel now has `GEMINI_API_KEY` (value not inspected). Real app AI remains unverified. Configure or replace it as a production secret at https://vercel.com/ponpon2/study-burger/settings/environment-variables and redeploy. Never put keys in chat, GitHub, or NEXT_PUBLIC variables. Then test generation, image OCR, audio transcription, cancellation, and cleanup with a real account.
 
 The application currently supports the public sample workflow. It must not be described as ready for fully functional public accounts or AI until these gates pass.
 
@@ -49,4 +49,6 @@ Use existing Vercel project `prj_oHCBziGESkSd6aQguc9zMUX8dGIG`, team `team_V97eE
 
 The connector's exact project ID with inferred scope works for deployments and settings. Explicit teamId, build-log access, and protected-fetch metadata have returned 403. No authenticated CLI is available. Source uploads work; GitHub automatic deployment is not verified. Check terminal READY and primary alias after each release.
 
-Gemini migration checks: 29 tests and production build passed. Provider requests are mocked; live generation/OCR/audio still require GEMINI_API_KEY. See GEMINI_SETUP.md for free-tier setup and Google model routing.
+Gemini migration checks: 30 tests and production build passed. Provider requests are mocked; live generation/OCR/audio still require GEMINI_API_KEY. See GEMINI_SETUP.md for free-tier setup and Google model routing.
+
+Gemini 3.8 is now the application default. The owner confirmed a playground response, but the earlier app generation failed with a generic provider error. Model correction and clearer temporary-provider errors are tested; production end-to-end AI must still pass.
