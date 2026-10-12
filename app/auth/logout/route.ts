@@ -1,0 +1,3 @@
+import {authClient,appOrigin} from '@/lib/auth';
+import {verifyMutation,securityResponse,SecurityError} from '@/lib/security';
+export async function POST(request:Request){try{verifyMutation(request);const auth=authClient(request);const {error}=await auth.client.auth.signOut({scope:'local'});if(error)throw new SecurityError('Sign-out could not be completed. Please try again.',503);return auth.finish(new Response(null,{status:303,headers:{Location:appOrigin()}}));}catch(e){return securityResponse(e);}}

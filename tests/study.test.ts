@@ -1,0 +1,10 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {schedule,makeCard,DAY,streak,seedData} from '../lib/study.ts';
+import {validateData} from '../lib/storage.ts';
+const now=Date.now();
+test('Again schedules a one minute retry and resets mastery',()=>{const c={...makeCard('q','a'),interval:10,repetitions:4,state:'mastered' as const};const n=schedule(c,'again',now);assert.equal(n.due,now+60000);assert.equal(n.repetitions,0);assert.equal(n.state,'learning');assert.equal(c.state,'mastered');});
+test('Good progresses through 1, 2, 4, 8 days and requires repeated recalls for mastery',()=>{let c=makeCard('q','a');for(const expected of [1,2,4,8]){c=schedule(c,'good',now);assert.equal(c.interval,expected);assert.equal(c.due,now+expected*DAY);assert.equal(c.state,expected>=8?'mastered':'learning');}});
+test('Easy starts at 4 days but cannot instantly claim mastery',()=>{let c=schedule(makeCard('q','a'),'easy',now);assert.equal(c.interval,4);assert.equal(c.state,'learning');c=schedule(c,'easy',now);assert.equal(c.interval,12);assert.equal(c.state,'learning');c=schedule(c,'easy',now);assert.equal(c.state,'mastered');});
+test('Streak counts calendar days and multiple reviews only once',()=>{const n=new Date(2026,9,11,14).getTime();const r=(days:number)=>({cardId:'c',deckId:'d',rating:'good' as const,at:new Date(2026,9,11-days,14).getTime()});assert.equal(streak([r(0),r(0),r(1),r(2)],n),3);assert.equal(streak([r(1),r(2)],n),2);assert.equal(streak([r(2)],n),0);});
+test('Backups roundtrip and invalid or duplicate IDs are rejected',()=>{const d=seedData();assert.deepEqual(validateData(JSON.parse(JSON.stringify(d))),d);assert.throws(()=>validateData({...d,goal:-1}));d.decks[1].cards[0].id=d.decks[0].cards[0].id;assert.throws(()=>validateData(d));});
