@@ -1,5 +1,15 @@
 # Release status
 
+## Upload limits and AI recovery, October 15, 2026
+
+- Documents: 100 MiB, parsed in the browser. Existing text/page/expanded-archive limits remain to protect browser memory.
+- Images/audio: 50 MiB. The live private `study-media` bucket was updated from 20 MiB to 50 MiB and checked with a follow-up query. Supabase Free cannot store a single 100 MiB object.
+- Gemini generation, OCR and transcription retry temporary errors and short cooldowns, then use a second Flash model. Daily quota exhaustion and long cooldowns stop without repeated calls. Total generation time is bounded to 90 seconds.
+- Media over 12 MiB uses Google Files API with state polling and best-effort deletion after completion/failure/cancellation. Google expires orphaned uploads after 48 hours. Client cancellation also requests private Storage cleanup.
+- Failed uploads can be retried from the editor. Notes and partial cards remain available during the open editing session, and manual card creation remains available during AI outages.
+- 36 automated tests passed, including simulated overload/fallback, quota handling, cancellation, media boundaries and Google file cleanup. Production build and TypeScript checks passed.
+- Real-account 50 MiB media upload/transcription and fallback model access have not been independently verified. Production runtime logs returned 403, so the original provider incident cannot be confirmed from logs. Free-tier quotas and provider outages can still interrupt AI generation; uninterrupted availability is not promised.
+
 ## Hand-drawn interface release
 
 Production origin: **https://study-burger.vercel.app**. The existing Vercel project and Ponpon alias redirects are preserved.

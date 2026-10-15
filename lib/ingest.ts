@@ -1,11 +1,12 @@
+import {MAX_DOCUMENT_BYTES,MAX_MEDIA_BYTES} from './upload-limits.ts';
 export const ACCEPT='.pdf,.docx,.pptx,.png,.jpg,.jpeg,.mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm,.txt,.md';
-export const MAX_FILE=20*1024*1024;
+export const MAX_FILE=MAX_DOCUMENT_BYTES;
 export const MAX_TEXT=120000;
 function validateText(text:string){const clean=text.replace(/\r/g,'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();if(!clean)throw new Error('No readable text found. For scanned documents, upload individual pages as PNG or JPG for OCR.');if(clean.length>MAX_TEXT)throw new Error('This file contains more than 120,000 characters. Split it into smaller chapters and upload each separately.');return clean;}
 export async function extractFile(file:File,onProgress:(s:string)=>void,signal:AbortSignal):Promise<string>{
  signal.throwIfAborted();
  if(!file.size)throw new Error('This file is empty.');
- if(file.size>MAX_FILE)throw new Error('Files can be up to 20 MB. Please split or compress this file.');
+ if(file.size>MAX_FILE)throw new Error('Documents can be up to 100 MB. Please split or compress this file.');
  const ext=file.name.split('.').pop()?.toLowerCase();
  onProgress('Reading your file…');
  if(ext==='txt'||ext==='md'){const text=await file.text();signal.throwIfAborted();return validateText(text);}
@@ -26,17 +27,22 @@ export async function extractFile(file:File,onProgress:(s:string)=>void,signal:A
  try{const pdf=await task.promise;if(pdf.numPages>300)throw new Error('PDFs can contain up to 300 pages. Please split this document.');const pages:string[]=[];let size=0;for(let i=1;i<=pdf.numPages;i++){if(signal.aborted)throw new DOMException('Cancelled','AbortError');onProgress(`Extracting page ${i} of ${pdf.numPages}…`);const page=await pdf.getPage(i);const content=await page.getTextContent();const text=content.items.map(it=>'str' in it?it.str+('hasEOL' in it&&it.hasEOL?'\n':' '):'').join('');size+=text.length;if(size>MAX_TEXT)throw new Error('This PDF is too long. Split it into chapters.');pages.push(text);page.cleanup();}return validateText(pages.join('\n\n'));}finally{signal.removeEventListener('abort',abort);await task.destroy();}
  }
  if(['png','jpg','jpeg','mp3','mp4','mpeg','mpga','m4a','wav','webm'].includes(ext||'')){
- if(file.size>12*1024*1024)throw new Error('Images and audio can be up to 12 MB. Split or compress this file.');
+ if(file.size>MAX_MEDIA_BYTES)throw new Error('Images and audio can be up to 50 MB. Split or compress this file.');
  onProgress('Preparing secure media upload…');
  const prepared=await fetch('/api/media-upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ext,size:file.size}),signal});
  const upload=await prepared.json() as {signedUrl:string;path:string;error?:string};
  if(!prepared.ok)throw new Error(upload.error||'Could not prepare upload.');
+ try{
  onProgress('Uploading your media securely…');
  const sent=await fetch(upload.signedUrl,{method:'PUT',headers:{'Content-Type':file.type||'application/octet-stream'},body:file,signal});
  if(!sent.ok)throw new Error('Upload failed. Check your connection and retry.');
- onProgress(['png','jpg','jpeg'].includes(ext!)?'Reading image with AI…':'Transcribing your recording…');
+ onProgress(['png','jpg','jpeg'].includes(ext!)?'Reading image · automatically retrying if needed…':'Transcribing audio · automatically retrying if needed…');
  const response=await fetch('/api/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:upload.path}),signal});
  const result=await response.json() as {error?:string;text:string};if(!response.ok)throw new Error(result.error||'Extraction failed. Please try again.');return validateText(result.text);
+ }finally{
+ // Independent signal lets cleanup run after cancellation or a failed network request.
+ await fetch('/api/media-upload',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:upload.path}),signal:AbortSignal.timeout(5000)}).catch(()=>{});
+ }
  }
  throw new Error('Unsupported format. Try PDF, DOCX, PPTX, PNG, JPG, audio, TXT, or Markdown.');
 }

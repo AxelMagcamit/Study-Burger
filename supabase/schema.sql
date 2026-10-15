@@ -92,7 +92,7 @@ language sql security invoker set search_path='' as $$ select study_private.oper
 revoke all on function public.study_operation(text,jsonb) from public,anon;
 grant execute on function public.study_operation(text,jsonb) to authenticated;
 
-insert into storage.buckets(id,name,public,file_size_limit) values('study-media','study-media',false,20971520);
+insert into storage.buckets(id,name,public,file_size_limit) values('study-media','study-media',false,52428800);
 create function study_private.upload_allowed(object_path text) returns boolean
 language sql stable security definer set search_path='' as $$
  select auth.uid() is not null and exists(select 1 from study_private.uploads where path=object_path and user_id=auth.uid() and expires_at>now())
