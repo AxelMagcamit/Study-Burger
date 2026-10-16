@@ -1,5 +1,12 @@
 # Release status
 
+## Full-body Ponpon animation, October 16, 2026
+
+- Reused Ponpon's existing face, sunflower petals, palette and proportions in a lightweight SVG rig. Body sway, paw waves, toe taps, tail movement and blinks replace whole-image rocking. Completion uses a full-body hop and two-paw cheer; reading, thinking, resting and error states use calmer motions.
+- Pause/play controls on welcome, dashboard and study screens remember the preference locally. Device reduced motion overrides animation, and hidden tabs pause. No accounts, AI configuration, deck data or scheduling changes.
+- Existing 42 tests and three new mascot rendering/accessibility guards passed. Production build, TypeScript and whitespace checks passed. Browser interaction verification and deployment confirmation are recorded separately after release; this entry alone does not certify them.
+- Implementation and manual QA checklist: [Ponpon animation](docs/ponpon-animation.md).
+
 ## Multiple choice and editable card formats, October 16, 2026
 
 - New generation format: Multiple choice, with four distinct options, one correct answer and an explanation. Server validation rejects malformed AI output.

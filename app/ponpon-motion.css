@@ -1,0 +1,94 @@
+/* Rig-local transforms leave responsive positioning and card layout untouched. */
+.ponpon-rig.ponpon-animated { animation: none; }
+.ponpon-rig { flex-shrink: 0; overflow: visible; }
+.ponpon-part { transform-box: view-box; }
+.ponpon-body, .ponpon-torso { transform-origin: 200px 350px; }
+.ponpon-head { transform-origin: 200px 275px; }
+.ponpon-tail { transform-origin: 113px 310px; }
+.ponpon-foot-left { transform-origin: 162px 340px; }
+.ponpon-foot-right { transform-origin: 247px 340px; }
+.ponpon-arm-left { transform-origin: 126px 273px; }
+.ponpon-arm-right { transform-origin: 274px 273px; }
+.ponpon-eyes { transform-origin: 200px 184px; }
+.ponpon-prop { transform-origin: 200px 325px; }
+.ponpon-shadow { transform-origin: 202px 363px; }
+.ponpon-sparkles { transform-origin: 200px 100px; }
+.ponpon-paw-pads { opacity: 0; }
+.mood-welcome .ponpon-arm-left .ponpon-paw-pads,
+.mood-celebrate .ponpon-paw-pads { opacity: 1; }
+.study-top .ponpon-mascot { width: 36px; height: 36px; }
+.ponpon-motion-button { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+.study-top .study-companion { display: flex; align-items: center; gap: 9px; }
+/* Room for the complete seated body instead of a cropped face. */
+.signin-portrait { width: 112px; height: 112px; }
+.signin-portrait .ponpon-mascot { width: 118px; height: 118px; }
+@media (max-width: 600px) {
+  .signin-portrait { width: 88px; height: 88px; }
+  .signin-portrait .ponpon-mascot { width: 94px; height: 94px; }
+  .story-nav > a[href="#how-it-works"] { display: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ponpon-animated .ponpon-body { animation: ponpon-body-sway 4.8s ease-in-out infinite; }
+  .ponpon-animated .ponpon-torso { animation: ponpon-breathe 4s ease-in-out infinite; }
+  .ponpon-animated .ponpon-tail { animation: ponpon-tail-swish 3.2s ease-in-out infinite; }
+  .ponpon-animated .ponpon-head { animation: ponpon-head-tilt 4.8s ease-in-out infinite; }
+  .ponpon-animated .ponpon-eyes { animation: ponpon-blink 6.4s linear infinite; }
+  .ponpon-animated.mood-welcome .ponpon-arm-left { animation: ponpon-wave 6s ease-in-out infinite; }
+  .ponpon-animated.mood-welcome .ponpon-foot-right { animation: ponpon-toe-tap 4.8s ease-in-out infinite; }
+  .ponpon-animated.mood-celebrate .ponpon-body { animation: ponpon-hop 2.4s ease-in-out infinite; }
+  .ponpon-animated.mood-celebrate .ponpon-head { animation: ponpon-head-tilt 2.4s ease-in-out infinite; }
+  .ponpon-animated.mood-celebrate .ponpon-arm-left { animation: ponpon-cheer-left 2.4s ease-in-out infinite; }
+  .ponpon-animated.mood-celebrate .ponpon-arm-right { animation: ponpon-cheer-right 2.4s ease-in-out infinite; }
+  .ponpon-animated.mood-celebrate .ponpon-shadow { animation: ponpon-hop-shadow 2.4s ease-in-out infinite; }
+  .ponpon-animated.mood-celebrate .ponpon-sparkles { animation: ponpon-sparkle 2.4s ease-in-out infinite; }
+  .ponpon-animated.mood-focused .ponpon-body { animation-duration: 7s; }
+  .ponpon-animated.mood-focused .ponpon-head { animation: ponpon-read 7s ease-in-out infinite; }
+  .ponpon-animated.mood-focused .ponpon-prop { animation: ponpon-book 7s ease-in-out infinite; }
+  .ponpon-animated.mood-thinking .ponpon-head { animation: ponpon-thought 5s ease-in-out infinite; }
+  .ponpon-animated.mood-thinking .ponpon-prop { animation: ponpon-book 5s ease-in-out infinite; }
+  .ponpon-animated.mood-thinking .ponpon-foot-left { animation: ponpon-toe-tap 2.5s ease-in-out infinite; }
+  .ponpon-animated.mood-curious .ponpon-head { animation: ponpon-thought 6s ease-in-out infinite; }
+  .ponpon-animated.mood-curious .ponpon-prop { animation: ponpon-search 6s ease-in-out infinite; }
+  .ponpon-animated.mood-sleepy .ponpon-body { animation: ponpon-breathe 5s ease-in-out infinite; }
+  .ponpon-animated.mood-sleepy .ponpon-head { animation: ponpon-doze 5s ease-in-out infinite; }
+  .ponpon-animated.mood-sleepy .ponpon-tail { animation-duration: 8s; }
+  .ponpon-animated.mood-concerned .ponpon-head { animation: ponpon-nod 5s ease-in-out infinite; }
+  .ponpon-animated.mood-concerned .ponpon-body { animation-duration: 8s; }
+  /* Start still, pause everywhere from one control, and stop in hidden tabs. */
+  :root:not([data-ponpon-motion="on"]) .ponpon-animated .ponpon-part { animation-play-state: paused; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ponpon-rig, .ponpon-rig .ponpon-part { animation: none !important; }
+}
+@keyframes ponpon-body-sway {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  25% { transform: translateY(-4px) rotate(1.5deg); }
+  50% { transform: translateY(0) rotate(1deg); }
+  75% { transform: translateY(-3px) rotate(-1.5deg); }
+}
+@keyframes ponpon-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.015, 1.025); } }
+@keyframes ponpon-tail-swish { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(12deg); } }
+@keyframes ponpon-head-tilt { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-3deg); } 70% { transform: rotate(3deg); } }
+@keyframes ponpon-blink { 0%, 40%, 44%, 72%, 76%, 100% { transform: scaleY(1); } 42%, 74% { transform: scaleY(.08); } }
+@keyframes ponpon-wave {
+  0%, 12%, 78%, 100% { transform: rotate(0); }
+  26%, 44%, 62% { transform: rotate(125deg); }
+  35%, 53% { transform: rotate(102deg); }
+}
+@keyframes ponpon-toe-tap { 0%, 30%, 70%, 100% { transform: translateY(0); } 45%, 60% { transform: translateY(-5px) rotate(-4deg); } }
+@keyframes ponpon-hop {
+  0%, 65%, 100% { transform: translateY(0) scale(1); }
+  12%, 48% { transform: translateY(3px) scale(1.035, .96); }
+  28% { transform: translateY(-17px) scale(.98, 1.02); }
+}
+@keyframes ponpon-cheer-left { 0%, 65%, 100% { transform: rotate(15deg); } 25%, 40% { transform: rotate(125deg); } }
+@keyframes ponpon-cheer-right { 0%, 65%, 100% { transform: rotate(-15deg); } 25%, 40% { transform: rotate(-125deg); } }
+@keyframes ponpon-hop-shadow { 0%, 12%, 48%, 100% { transform: scaleX(1); opacity: .1; } 28% { transform: scaleX(.82); opacity: .06; } }
+@keyframes ponpon-sparkle { 0%, 60%, 100% { transform: scale(.92); opacity: .5; } 28% { transform: scale(1.04); opacity: 1; } }
+@keyframes ponpon-read { 0%, 100% { transform: translateY(0) rotate(-2deg); } 40%, 65% { transform: translateY(5px) rotate(2deg); } }
+@keyframes ponpon-book { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px) rotate(2deg); } }
+@keyframes ponpon-thought { 0%, 100% { transform: rotate(0); } 25%, 50% { transform: rotate(-5deg) translateY(-2px); } 75% { transform: rotate(3deg); } }
+@keyframes ponpon-search { 0%, 100% { transform: rotate(0); } 35%, 65% { transform: rotate(-12deg) translateY(-4px); } }
+@keyframes ponpon-doze { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px) rotate(2deg); } }
+@keyframes ponpon-nod { 0%, 30%, 70%, 100% { transform: translateY(0); } 45%, 60% { transform: translateY(4px) rotate(-2deg); } }
