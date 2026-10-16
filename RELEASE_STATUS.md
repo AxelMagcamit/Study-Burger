@@ -7,7 +7,8 @@
 - Quiz sessions shuffle choices, support keyboard selection (1–4), show correct/incorrect feedback, and report correct attempts. Continue saves the review: correct answers use Good scheduling; incorrect answers use Again and return after one minute.
 - Optional card fields preserve legacy data compatibility. Account validation, backups and unsaved drafts retain quiz options and formats. Changing content or format resets that card's schedule; unchanged cards retain progress. No database schema, RLS or authentication changes.
 - All 42 automated tests passed, including generation, invalid options, answer identity after shuffling, legacy conversion, scheduling reset and backup/draft round trips. The production build, TypeScript and whitespace checks passed.
-- Live signed-in Gemini generation and account persistence have not been independently exercised. Browser visual testing was blocked by an unavailable Chromium installation; the download returned an invalid archive. Existing production runtime-log access remains unavailable.
+- Production release `9a6298e` reached READY on the existing Vercel project and `study-burger.vercel.app`. Cloud-browser sample-mode verification passed: convert an older card, edit its four options, save it for the visit, see shuffled options, select with the keyboard, check the correct answer, and continue to the next flashcard with the review recorded. The original hand-drawn appearance was visually checked.
+- Live signed-in Gemini generation and account persistence have not been independently exercised. Local Chromium installation was unavailable, so the public sample flow was verified in the cloud browser instead. Mobile-specific visual checks and production runtime logs remain unverified.
 
 ## Upload limits and AI recovery, October 15, 2026
 
