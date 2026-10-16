@@ -21,7 +21,7 @@ export async function extractFile(file:File,onProgress:(s:string)=>void,signal:A
  return validateText(out.join('\n\n'));
  }
  if(ext==='pdf'){
- const pdfjs=await import('pdfjs-dist');pdfjs.GlobalWorkerOptions.workerSrc='/pdf.worker.min.mjs';
+ const pdfjs=await import('pdfjs-dist/legacy/build/pdf.mjs');pdfjs.GlobalWorkerOptions.workerSrc='/pdf.worker.legacy.min.mjs';
  const task=pdfjs.getDocument({data:await file.arrayBuffer()});
  const abort=()=>{void task.destroy();};signal.addEventListener('abort',abort);
  try{const pdf=await task.promise;if(pdf.numPages>300)throw new Error('PDFs can contain up to 300 pages. Please split this document.');const pages:string[]=[];let size=0;for(let i=1;i<=pdf.numPages;i++){if(signal.aborted)throw new DOMException('Cancelled','AbortError');onProgress(`Extracting page ${i} of ${pdf.numPages}…`);const page=await pdf.getPage(i);const content=await page.getTextContent();const text=content.items.map(it=>'str' in it?it.str+('hasEOL' in it&&it.hasEOL?'\n':' '):'').join('');size+=text.length;if(size>MAX_TEXT)throw new Error('This PDF is too long. Split it into chapters.');pages.push(text);page.cleanup();}return validateText(pages.join('\n\n'));}finally{signal.removeEventListener('abort',abort);await task.destroy();}
@@ -45,4 +45,14 @@ export async function extractFile(file:File,onProgress:(s:string)=>void,signal:A
  }
  }
  throw new Error('Unsupported format. Try PDF, DOCX, PPTX, PNG, JPG, audio, TXT, or Markdown.');
+}
+
+// Keep engine-specific errors out of the UI while preserving actionable parser errors.
+export function fileErrorMessage(error:unknown):string {
+ if(error instanceof TypeError || error instanceof ReferenceError) return 'Your browser could not read this file. Try updating Safari, uploading a TXT version, or pasting your notes below.';
+ const message=error instanceof Error?error.message:'';
+ if(!message) return 'Could not read this file. Try another file or paste your notes below.';
+ if(error instanceof Error && error.name==='PasswordException') return 'This PDF is password-protected. Upload an unlocked copy.';
+ if(error instanceof Error && error.name==='InvalidPDFException') return 'This PDF could not be read. Export a new PDF or paste your notes below.';
+ return message;
 }

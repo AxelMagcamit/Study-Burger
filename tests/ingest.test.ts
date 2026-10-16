@@ -3,3 +3,11 @@ import assert from 'node:assert/strict';
 import {extractFile,MAX_TEXT,MAX_FILE} from '../lib/ingest.ts';
 test('Text extraction normalizes whitespace and rejects empty or oversized content',async()=>{const read=(text:string)=>extractFile(new File([text],'notes.md'),()=>{},new AbortController().signal);assert.equal(await read('One  idea\r\n\n\nTwo'),'One idea\n\nTwo');await assert.rejects(()=>read('  '),/No readable text/);await assert.rejects(()=>read('a'.repeat(MAX_TEXT+1)),/Split it/);await assert.rejects(()=>extractFile(new File([new Uint8Array(MAX_FILE+1)],'big.txt'),()=>{},new AbortController().signal),/100 MB/);});
 test('Cancelled and unsupported uploads do not start processing',async()=>{const controller=new AbortController();controller.abort();await assert.rejects(()=>extractFile(new File(['hello'],'notes.txt'),()=>{},controller.signal),{name:'AbortError'});await assert.rejects(()=>extractFile(new File(['hello'],'program.exe'),()=>{},new AbortController().signal),/Unsupported/);});
+
+test('File errors give actionable guidance without exposing browser internals',async()=>{
+ const {fileErrorMessage}=await import('../lib/ingest.ts');
+ assert.match(fileErrorMessage(new TypeError("undefined is not a function (near '...t of e...')")),/paste|pasting/);
+ assert.doesNotMatch(fileErrorMessage(new TypeError('internal details')),/internal details/);
+ assert.match(fileErrorMessage(Object.assign(new Error('secret'),{name:'PasswordException'})),/unlocked/);
+ assert.equal(fileErrorMessage(new Error('Split this file.')),'Split this file.');
+});

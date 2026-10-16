@@ -1,7 +1,7 @@
 'use client';
 import {useRef,useState,useEffect} from 'react';
 import {UploadCloud,FileText,Plus,Trash2,Sparkles,ArrowRight,LoaderCircle,Check,ArrowLeft} from 'lucide-react';
-import {ACCEPT,MAX_TEXT,extractFile} from '@/lib/ingest';
+import {ACCEPT,MAX_TEXT,extractFile,fileErrorMessage} from '@/lib/ingest';
 import {UPLOAD_LIMIT_LABEL} from '@/lib/upload-limits';
 import {Deck,Card,makeCard,MultipleChoice,CardFormat,cardFormat,changeCardFormat} from '@/lib/study';
 import Modal from './Modal';
@@ -15,7 +15,7 @@ export default function DeckEditor({deck,ai,onClose,onSave}:{deck?:Deck;ai:boole
  const dirty=title!==(deck?.title||'')||text!==''||JSON.stringify(cards)!==JSON.stringify(deck?.cards||[]);
  useEffect(()=>{if(!dirty)return;const warn=(e:BeforeUnloadEvent)=>{e.preventDefault();e.returnValue='';};window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[dirty]);
  function close(){if((dirty||busy)&&!window.confirm('Discard unsaved deck changes?'))return;abort.current?.abort();onClose();}
- async function read(file?:File){if(!file||lock.current)return;if(!ai&&!/\.(pdf|docx|pptx|txt|md)$/i.test(file.name)){setError('Image and audio processing needs AI. Use a document or paste text instead.');return;}lock.current=true;setRetryFile(file);setError('');abort.current=new AbortController();try{const extracted=await extractFile(file,setBusy,abort.current.signal);if(abort.current.signal.aborted)return;setText(extracted);setRetryFile(null);setSource(file.name);if(!title)setTitle(file.name.replace(/\.[^.]+$/,'').slice(0,120));}catch(e){if((e as Error).name!=='AbortError')setError((e as Error).message);}finally{setBusy('');lock.current=false;}}
+ async function read(file?:File){if(!file||lock.current)return;if(!ai&&!/\.(pdf|docx|pptx|txt|md)$/i.test(file.name)){setError('Image and audio processing needs AI. Use a document or paste text instead.');return;}lock.current=true;setRetryFile(file);setError('');abort.current=new AbortController();try{const extracted=await extractFile(file,setBusy,abort.current.signal);if(abort.current.signal.aborted)return;setText(extracted);setRetryFile(null);setSource(file.name);if(!title)setTitle(file.name.replace(/\.[^.]+$/,'').slice(0,120));}catch(e){if((e as Error).name!=='AbortError')setError(fileErrorMessage(e));}finally{setBusy('');lock.current=false;}}
  async function generate(){if(lock.current)return;if(cards.length&&!window.confirm('Replace the current cards with newly generated cards?'))return;if(text.trim().length<40){setError('Add at least 40 characters of study material.');return;}lock.current=true;setError('');setDone(0);abort.current=new AbortController();const result:Card[]=[];try{
  const chunks:string[]=[];let rest=text.trim();while(rest.length){let n=Math.min(rest.length,15500);if(n<rest.length){const at=rest.lastIndexOf(' ',n);if(at>15000)n=at;}chunks.push(rest.slice(0,n));rest=rest.slice(n).trim();}
  if(chunks.length>1&&chunks[chunks.length-1].length<40){const tail=chunks.pop()!;chunks[chunks.length-1]+=' '+tail;}
