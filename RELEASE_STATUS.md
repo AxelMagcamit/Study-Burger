@@ -1,5 +1,14 @@
 # Release status
 
+## Multiple choice and editable card formats, October 16, 2026
+
+- New generation format: Multiple choice, with four distinct options, one correct answer and an explanation. Server validation rejects malformed AI output.
+- Edit deck exposes a format selector on every card, including older cards. Multiple-choice conversion preserves the old answer as the first suggested option; users must complete and review the other choices. Fill-in-the-blank conversion requires editing the question to include `_____`. Changes are saved only when Save deck is selected.
+- Quiz sessions shuffle choices, support keyboard selection (1–4), show correct/incorrect feedback, and report correct attempts. Continue saves the review: correct answers use Good scheduling; incorrect answers use Again and return after one minute.
+- Optional card fields preserve legacy data compatibility. Account validation, backups and unsaved drafts retain quiz options and formats. Changing content or format resets that card's schedule; unchanged cards retain progress. No database schema, RLS or authentication changes.
+- All 42 automated tests passed, including generation, invalid options, answer identity after shuffling, legacy conversion, scheduling reset and backup/draft round trips. The production build, TypeScript and whitespace checks passed.
+- Live signed-in Gemini generation and account persistence have not been independently exercised. Browser visual testing was blocked by an unavailable Chromium installation; the download returned an invalid archive. Existing production runtime-log access remains unavailable.
+
 ## Upload limits and AI recovery, October 15, 2026
 
 - Documents: 100 MiB, parsed in the browser. Existing text/page/expanded-archive limits remain to protect browser memory.

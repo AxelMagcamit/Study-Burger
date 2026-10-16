@@ -2,6 +2,19 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {APIError,apiKey,generateCards,checkOrigin,generationInput,gemini,geminiModel,outputText,extractMedia} from '../lib/ai.ts';
 const signal=()=>new AbortController().signal;
+test('Multiple-choice generation requests four options and rejects malformed quizzes',async()=>fixture(async()=>{
+ const quiz={options:['Retrieving memories','Rereading notes','Highlighting text','Copying text'],correctIndex:0};
+ let captured:any;
+ globalThis.fetch=async(_url,opts)=>{captured=JSON.parse(String(opts?.body));return Response.json(reply(JSON.stringify({cards:[{question:'What is active recall?',answer:'Retrieval is active recall.',multipleChoice:quiz}]})));};
+ const input={text:'Active recall is retrieving information from memory.',count:1,style:'mcq' as const};
+ const cards=await generateCards(input,signal());assert.deepEqual((cards[0] as any).multipleChoice,quiz);
+ assert.match(captured.systemInstruction.parts[0].text,/unambiguously correct/);
+ assert.ok(captured.generationConfig.responseJsonSchema.properties.cards.items.required.includes('multipleChoice'));
+ for(const multipleChoice of [undefined,{...quiz,correctIndex:4},{...quiz,options:['A','a','C','D']}]){
+  globalThis.fetch=async()=>Response.json(reply(JSON.stringify({cards:[{question:'Question',answer:'Answer',multipleChoice}]})));
+  await assert.rejects(()=>generateCards(input,signal()),(error:unknown)=>error instanceof APIError&&error.status===502);
+ }
+}));
 const reply=(text:string,finishReason='STOP')=>({candidates:[{finishReason,content:{parts:[{text}]}}]});
 async function fixture(run:()=>Promise<void>){const fetch=globalThis.fetch;const key=process.env.GEMINI_API_KEY;const model=process.env.GEMINI_MODEL;process.env.GEMINI_API_KEY='test-only';delete process.env.GEMINI_MODEL;try{await run();}finally{globalThis.fetch=fetch;if(key===undefined)delete process.env.GEMINI_API_KEY;else process.env.GEMINI_API_KEY=key;if(model===undefined)delete process.env.GEMINI_MODEL;else process.env.GEMINI_MODEL=model;}}
 test('Missing Gemini key fails closed',async()=>fixture(async()=>{delete process.env.GEMINI_API_KEY;assert.throws(()=>apiKey(),(e:unknown)=>e instanceof APIError&&e.status===503);}));

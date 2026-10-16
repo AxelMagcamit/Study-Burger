@@ -1,5 +1,12 @@
 export type Rating = 'again' | 'good' | 'easy';
-export type Card = { id:string; question:string; answer:string; interval:number; due:number; repetitions:number; state:'unseen'|'learning'|'mastered' };
+export type MultipleChoice = {options:string[]; correctIndex:number};
+export type CardFormat = 'qa'|'cloze'|'mcq';
+export type Card = { id:string; question:string; answer:string; format?:CardFormat; multipleChoice?:MultipleChoice; interval:number; due:number; repetitions:number; state:'unseen'|'learning'|'mastered' };
+export function cardFormat(card:Card):CardFormat{return card.multipleChoice?'mcq':card.format==='cloze'||(!card.format&&card.question.includes('_____'))?'cloze':'qa';}
+export function changeCardFormat(card:Card,format:CardFormat):Card{
+ const answer=card.multipleChoice&&format!=='mcq'?`${card.multipleChoice.options[card.multipleChoice.correctIndex]}\n\n${card.answer}`.slice(0,3000):card.answer;
+ return {...card,format,answer,multipleChoice:format==='mcq'?(card.multipleChoice||{options:[card.answer.slice(0,500),'','',''],correctIndex:0}):undefined};
+}
 export type Deck = { id:string; title:string; description:string; color:string; source:string; created:number; cards:Card[] };
 export type Review = { cardId:string; deckId:string; at:number; rating:Rating };
 export type Data = { decks:Deck[]; reviews:Review[]; goal:number };

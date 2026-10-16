@@ -8,6 +8,8 @@ A flashcard study app with Ponpon, a sunflower-collared cat. Create cards from y
 
 - Import PDF, Word, PowerPoint, text and Markdown; use Gemini for flashcards, image OCR and audio transcription.
 - Preview, edit, add and remove cards before saving a deck.
+- Choose question-and-answer, fill-in-the-blank or multiple-choice cards. Change formats in older decks through Edit deck, without re-uploading material.
+- Multiple choice offers four editable options, shuffled review order, answer explanations and a session score. Use 1–4 to select, then Check answer and Continue. Incorrect answers return in one minute.
 - Review due cards with Again, Good and Easy scheduling. Space flips; arrows or 1/2/3 rate.
 - Track daily activity, streaks and mastery. Export and restore backups.
 - Save account data through Google sign-in and Supabase. Explore temporary sample decks without an account.
