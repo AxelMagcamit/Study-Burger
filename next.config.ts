@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  transpilePackages: ['pdfjs-dist'],
   async redirects() {
     return ['study-burger-ponpon.vercel.app', 'study-burger-ponpon2.vercel.app'].map(host => ({
       source: '/:path*',
