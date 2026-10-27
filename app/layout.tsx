@@ -6,6 +6,7 @@ import './refinements.css';
 import './handdrawn.css';
 import './multiple-choice.css';
 import './ponpon-motion.css';
+import './mobile.css';
 import {PonponMotionProvider} from '@/components/PonponMotion';
 export const metadata:Metadata={title:'Study Burger — Flashcards & review',description:'Turn study material into flashcards. Build lasting knowledge with active recall and spaced repetition.',icons:{icon:'/favicon.svg'},verification:{google:'qIQSeGylOL35T281pU_HW6NUQ5BrWcdjdqUlYAie5CQ'}};
 export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><PonponMotionProvider>{children}</PonponMotionProvider></body></html>;}

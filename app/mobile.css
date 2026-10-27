@@ -1,0 +1,21 @@
+/* Touch layouts: keep controls readable and avoid horizontal overflow. */
+@media(max-width:600px){
+ .modal,.modal.wide{width:calc(100% - 20px);max-height:calc(100dvh - 24px);overscroll-behavior:contain;}
+ .modal-head{padding:14px 16px;}.modal-body{padding:18px 16px;}
+ .modal-footer{padding:12px 16px max(12px,env(safe-area-inset-bottom));flex-wrap:wrap;gap:10px;}
+ .modal-footer>.button{flex:1 1 150px;min-width:0;white-space:normal;min-height:48px;}
+ .field input,.field textarea,.field select{font-size:16px;max-width:100%;}
+ .error-message,.error-banner{flex-wrap:wrap;overflow-wrap:anywhere;}
+ .modal-body [role=alert]{flex-wrap:wrap;overflow-wrap:anywhere;}
+ .modal-body [role=alert] .button{flex-shrink:0;}
+ .topbar{padding-inline:14px;}.topbar-actions{gap:8px;}.breadcrumb{min-width:0;}
+ .deck-card h3,.study-heading h1,.card-text{overflow-wrap:anywhere;}
+ .icon-button{min-width:44px;min-height:44px;}
+ .drop-zone{padding:22px 14px;}.drop-zone small{line-height:1.6;}
+ .ratings{gap:8px;}.rating{min-width:0;padding-inline:8px;}
+}
+@media(hover:none) and (pointer:coarse){
+ button,a,input,select,textarea{touch-action:manipulation;}
+ .ratings kbd,.keyboard-hint{display:none;}
+ .modal::backdrop{backdrop-filter:none;}
+}
