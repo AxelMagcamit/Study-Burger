@@ -1,5 +1,14 @@
 # Release status
 
+## Mobile sign-in recovery, November 2, 2026
+
+- Google sign-in uses a native same-origin form and stays usable while the existing-session check is pending or unavailable. The prior fix is confirmed in production deployment `dpl_9sNQJPRsnQDU6gdMF84MABXH5zgQ` (`d3db2a4`).
+- Session checks now use an AbortController with a cleared timer instead of newer AbortSignal.any/timeout APIs, so older mobile browsers can run the check. Unmounting cancels the request without showing a spurious error.
+- Returning with browser Back resets the Google button's submitting state, allowing another sign-in attempt after cancellation.
+- Added coverage for the native form's 303 authorization redirect, PKCE challenge, HttpOnly cookie and no-store response.
+- All 50 tests, the production build, TypeScript and whitespace checks passed for this follow-up.
+- Before this follow-up deployment, a live browser click reached the configured Supabase `/auth/v1/authorize` endpoint. The test browser then encountered an upstream connection failure. Real Google account sign-in, callback completion and physical iPhone behavior remain unverified.
+
 ## Full-body Ponpon animation, October 16, 2026
 
 - Reused Ponpon's existing face, sunflower petals, palette and proportions in a lightweight SVG rig. Body sway, paw waves, toe taps, tail movement and blinks replace whole-image rocking. Completion uses a full-body hop and two-paw cheer; reading, thinking, resting and error states use calmer motions.
