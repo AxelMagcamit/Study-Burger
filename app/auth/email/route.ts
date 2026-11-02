@@ -18,7 +18,7 @@ export async function POST(request:Request){
    ({error}=await auth.client.auth.updateUser({password}));
   }
   if(error)return auth.finish(jsonPrivate({error:error.status===429?'Too many attempts. Please wait before trying again.':action==='signin'?'Unable to sign in. Check your email and password, and confirm your email first.':'Unable to complete this request. Please try again later.'},error.status===429?429:400));
-  const user=action==='signin'||action==='signup'?await auth.user():null;
+  const user=action==='signin'||action==='signup'?await auth.user(true):null;
   return auth.finish(jsonPrivate({redirect:user||action==='update'?'/' :undefined,message:action==='signup'?'Check your email for a confirmation link. Open it in this browser, then sign in.':'If an account exists, a recovery link has been sent. Open it in this browser.'}));
  }catch(error){return securityResponse(error);}
 }

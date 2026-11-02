@@ -1,5 +1,14 @@
 # Release status
 
+## Profile and authenticator settings, November 2, 2026
+
+- Optional authenticator-app 2FA setup, verification at login, and removal with a fresh authenticator code. Email and Google callback flows preserve the session while asking for the second factor. No recovery codes are provided; users are prompted to keep an authenticator backup before enabling.
+- MFA enforced in server account access, profile/account RLS, private media RLS and the existing write RPC. Rollback-only database assertions passed for AAL1 denial, AAL2 access, non-enrolled access and profile ownership. Test fixtures were rolled back.
+- Private nickname and cropped profile photo settings; photos are resized to 128px JPEG and stored outside auth tokens. Explicit Save and Remove photo controls.
+- Sign out is visible in the top bar and sidebar. Account labels support both email and Google.
+- Existing 51 automated tests passed, plus a focused MFA regression test; production build and TypeScript passed. Real-user authenticator enrollment and photo persistence have not been exercised in a signed-in browser.
+- Database setup: apply `supabase/profile-mfa.sql` after the original schema on new installations.
+
 ## Mobile sign-in recovery, November 2, 2026
 
 - Google sign-in uses a native same-origin form and stays usable while the existing-session check is pending or unavailable. The prior fix is confirmed in production deployment `dpl_9sNQJPRsnQDU6gdMF84MABXH5zgQ` (`d3db2a4`).

@@ -5,6 +5,7 @@ import {ArrowRight,FileText,Moon,Sun,RotateCcw,Layers} from 'lucide-react';
 import Ponpon from './Ponpon';
 import GoogleSignIn from './GoogleSignIn';
 import EmailSignIn from './EmailSignIn';
+import MfaSettings from './MfaSettings';
 import type {AccountUser} from '@/lib/auth';
 const Dashboard=dynamic(()=>import('./Dashboard'),{loading:()=> <div className="loading-app"><Ponpon mood="thinking" className="state-ponpon" animate decorative/><p role="status">Opening your workspace…</p></div>});
 export default function Entry(){
@@ -30,6 +31,7 @@ export default function Entry(){
   return()=>{active=false;window.clearTimeout(timeout);controller.abort();};
  },[]);
  function toggleTheme(){const next=theme==='light'?'dark':'light';setTheme(next);document.documentElement.dataset.theme=next;try{localStorage.setItem('study-burger-theme',next);}catch{}}
+ if(!demo&&session?.user?.mfaRequired)return <main className="mfa-gate login-card"><h1>Study Burger</h1><MfaSettings challenge/></main>;
  if(demo||session?.user)return <Dashboard key={demo?'demo':session!.user!.userId} demo={demo} user={session?.user||undefined} onLeave={()=>{setDemo(false);if(session?.user)window.location.href='/';}}/>;
  return <div className="storybook compact-home"><a className="skip-link" href="#main-content">Skip to content</a>
   <header className="story-header"><a href="/" className="brand story-brand" aria-label="Study Burger home"><img src="/ponpon.svg" width="48" height="48" alt=""/><span>study<br/><b>burger.</b></span></a><nav className="story-nav" aria-label="Main navigation"><a href="#how-it-works">How it works</a><button className="icon-button" onClick={toggleTheme} aria-label={`Switch to ${theme==='light'?'dark':'light'} mode`}>{theme==='light'?<Moon size={18}/>:<Sun size={18}/>}</button><a className="button story-nav-cta" href="#sign-in">Sign in</a></nav></header>

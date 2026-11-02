@@ -27,3 +27,13 @@ test('Email authentication rejects cross-origin requests and invalid passwords',
  const short=await emailAuth.POST(new Request(origin+'/auth/email',{method:'POST',headers:{origin},body:JSON.stringify({action:'signup',email:'a@example.test',password:'short'})}));assert.equal(short.status,400);
  const reset=await emailAuth.POST(new Request(origin+'/auth/email',{method:'POST',headers:{origin},body:JSON.stringify({action:'update',password:'new-password-example'})}));assert.equal(reset.status,401);
 });
+test('Verified MFA factors block account access until AAL2, while login can show a challenge',async()=>{
+ const a=auth.authClient(new Request(origin));
+ const user={id:'a',email:'a@example.test',email_confirmed_at:'2026-01-01',user_metadata:{},identities:[{provider:'email'}],factors:[{status:'verified',factor_type:'totp'}]};
+ a.client.auth.getUser=async()=>({data:{user},error:null}) as never;
+ a.client.auth.mfa.getAuthenticatorAssuranceLevel=async()=>({data:{currentLevel:'aal1',nextLevel:'aal2'},error:null}) as never;
+ await assert.rejects(()=>a.user(),/two-factor/);assert.equal((await a.user(true))?.mfaRequired,true);
+ a.client.auth.mfa.getAuthenticatorAssuranceLevel=async()=>({data:{currentLevel:'aal2',nextLevel:'aal2'},error:null}) as never;
+ assert.equal((await a.user())?.mfaRequired,false);
+ user.factors[0].status='unverified';a.client.auth.mfa.getAuthenticatorAssuranceLevel=async()=>{throw Error('Should not require unfinished enrollment');};assert.equal((await a.user())?.mfaRequired,false);
+});
