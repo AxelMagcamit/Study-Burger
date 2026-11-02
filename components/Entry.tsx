@@ -9,7 +9,25 @@ const Dashboard=dynamic(()=>import('./Dashboard'),{loading:()=> <div className="
 export default function Entry(){
  const [session,setSession]=useState<{configured:boolean;user:AccountUser|null}|null>(null);
  const [demo,setDemo]=useState(false),[error,setError]=useState(''),[theme,setTheme]=useState('light');
- useEffect(()=>{const controller=new AbortController();fetch('/api/session',{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(10000)])}).then(async r=>{if(!r.ok)throw new Error('Could not check sign-in. Reload to try again.');setSession(await r.json());}).catch(e=>{if(e.name!=='AbortError')setError('Could not check your existing session. You can still continue with Google.');});if(new URLSearchParams(window.location.search).has('auth_error')){setError('Sign-in did not finish. Please try again.');history.replaceState(null,'','/');}try{const saved=localStorage.getItem('study-burger-theme')==='dark'?'dark':'light';setTheme(saved);document.documentElement.dataset.theme=saved;}catch{}return()=>controller.abort();},[]);
+ useEffect(()=>{
+  const controller=new AbortController();
+  let active=true;
+  // Older mobile browsers support AbortController but not AbortSignal.any/timeout.
+  const timeout=window.setTimeout(()=>controller.abort(),10000);
+  void (async()=>{
+   try{
+    const response=await fetch('/api/session',{cache:'no-store',signal:controller.signal});
+    if(!response.ok)throw new Error('Could not check sign-in.');
+    const nextSession=await response.json();
+    if(active)setSession(nextSession);
+   }catch{
+    if(active)setError(current=>current||'Could not check your existing session. You can still continue with Google.');
+   }finally{window.clearTimeout(timeout);}
+  })();
+  if(new URLSearchParams(window.location.search).has('auth_error')){setError('Sign-in did not finish. Please try again.');history.replaceState(null,'','/');}
+  try{const saved=localStorage.getItem('study-burger-theme')==='dark'?'dark':'light';setTheme(saved);document.documentElement.dataset.theme=saved;}catch{}
+  return()=>{active=false;window.clearTimeout(timeout);controller.abort();};
+ },[]);
  function toggleTheme(){const next=theme==='light'?'dark':'light';setTheme(next);document.documentElement.dataset.theme=next;try{localStorage.setItem('study-burger-theme',next);}catch{}}
  if(demo||session?.user)return <Dashboard key={demo?'demo':session!.user!.userId} demo={demo} user={session?.user||undefined} onLeave={()=>{setDemo(false);if(session?.user)window.location.href='/';}}/>;
  return <div className="storybook compact-home"><a className="skip-link" href="#main-content">Skip to content</a>
